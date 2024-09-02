@@ -26,7 +26,7 @@ def run_query(query):
         cur.execute(query)
         return cur.fetchall()
 
-rows = run_query("SELECT * from ACCDEF;")
+rows = run_query("SELECT TOP 10 (ACCNBR) FROM ACCDEF a ;")
 
 # Print results.
 for row in rows:
