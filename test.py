@@ -3,6 +3,7 @@ Connects to a SQL database using pymssql
 """
 import pymssql
 import pandas as pd
+import streamlit as st
 
 ## MSSQL 접속
 conn = pymssql.connect(
@@ -36,3 +37,5 @@ conn.close()
 # print(row)
 df = pd.DataFrame(row)
 print(df)
+
+st.dataframe(df)
