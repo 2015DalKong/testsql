@@ -1,33 +1,38 @@
-import streamlit as st
-import pyodbc
+"""
+Connects to a SQL database using pymssql
+"""
+import pymssql
+import pandas as pd
 
-# Initialize connection.
-# Uses st.cache_resource to only run once.
-@st.cache_resource
-def init_connection():
-    return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
-        + st.secrets["server"]
-        + ";DATABASE="
-        + st.secrets["database"]
-        + ";UID="
-        + st.secrets["username"]
-        + ";PWD="
-        + st.secrets["password"]
-    )
+## MSSQL 접속
+conn = pymssql.connect(
+    server='172.16.0.230',
+    port='49936',
+    user='sa_imn',
+    password='Wdk@0424!@#$',
+    database='IEDATA_IMN',
+    as_dict=True
+)
+cursor = conn.cursor()
 
-conn = init_connection()
+## SQL문 실행
+SQL_QUERY = """
+SELECT TOP 10 (ACCNBR) FROM ACCDEF a ;
+"""
+cursor.execute(SQL_QUERY)
 
-# Perform query.
-# Uses st.cache_data to only rerun when the query changes or after 10 min.
-@st.cache_data(ttl=600)
-def run_query(query):
-    with conn.cursor() as cur:
-        cur.execute(query)
-        return cur.fetchall()
+# records = cursor.fetchall()
+# for r in records:
+#     print(f"{r['ACCNBR']}")
 
-rows = run_query("SELECT TOP 10 (ACCNBR) FROM ACCDEF a ;")
+row = cursor.fetchall()
+# while row:
+#     # print(row)
+#     row=cursor.fetchone()
+#     break
 
-# Print results.
-for row in rows:
-    st.write(f"{row[0]} has a :{row[1]}:")
+conn.close()
+
+# print(row)
+df = pd.DataFrame(row)
+print(df)
